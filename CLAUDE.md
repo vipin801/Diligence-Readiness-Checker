@@ -8,7 +8,10 @@ the specific things investors will flag in their data room, each with a severity
 an estimated delay in weeks, and who fixes it — headlined as a time cost, not a score.
 
 Incentiv is India private-markets infrastructure (cap table/ESOP, fund ops,
-secondaries, advisory). This tool is top-of-funnel for the cap-table product.
+secondaries, advisory). This tool is top-of-funnel for the cap-table product,
+which is called **Tabulate** — confirmed by the human on 2026-09-04. Use that
+name in all CTA copy. DESIGN.md §1 calls it "Equity"; DESIGN.md is wrong on
+this point and right about everything visual.
 
 ---
 
@@ -89,6 +92,22 @@ PDF export, saved/shareable results.
 - Touch targets ≥44px.
 
 ---
+
+## Where the design system lives
+
+`src/app/globals.css` is the token layer and the only place colours, type sizes,
+radii and the component classes are defined. It uses DESIGN.md's own class names
+(`.section-label`, `.heading-hero`, `.btn-primary`, `.card-elevated`, `.badge`,
+`.section-divider`, `.page-edge-lines`) so the spec and the code stay greppable
+against each other. Never hard-code a hex in a component — use the tokens.
+
+`src/components/ui/` holds the primitives (Button, Card, Badge, ProgressBar,
+RadioOption, CheckboxOption, SectionLabel), re-exported from `@/components/ui`.
+They are presentational only and hold no state.
+
+`/styleguide` renders every token and primitive in both modes. **It is temporary
+and must be deleted before launch** — remove `src/app/styleguide/`; nothing else
+imports from it.
 
 ## Commands
 
