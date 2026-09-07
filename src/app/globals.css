@@ -18,24 +18,33 @@
    inside a dark ancestor — the styleguide shows both modes on one page. */
 :root,
 .light {
+  /* Tells the browser which way form controls, scrollbars and the caret
+     should render, so native UI matches the palette rather than fighting it. */
+  color-scheme: light;
+
   /* Background surfaces — warm, never pure white */
-  --background: 40 33% 98%; /* #FDFCF9 warm cream — the page canvas */
-  --surface: 36 26% 94%; /* #F5F2ED warm gray — alternating sections */
+  --background: 45 50% 98.43%; /* #FDFCF9 warm cream — the page canvas */
+  --surface: 37.5 28.57% 94.51%; /* #F5F2ED warm gray */
   --surface-elevated: 36 20% 96%; /* layered panels within surface sections */
   --card: 0 0% 100%; /* #FFFFFF — the raised layer above cream */
 
   /* Text */
-  --foreground: 0 0% 10%; /* #1A1A1A */
+  --foreground: 0 0% 10.2%; /* #1A1A1A */
   --muted-foreground: 0 0% 40%; /* #666666 */
 
   /* Lines */
-  --border: 36 15% 88%; /* #E5E2DC warm border — never cool gray */
-  --input: 36 15% 88%;
-  --ring: 214 100% 60%; /* focus ring is brand blue */
+  --border: 40 14.75% 88.04%; /* #E5E2DC warm border — never cool gray */
+  --input: 40 14.75% 88.04%;
+  --ring: 216.95 100% 60.2%; /* #3482ff */
 
   /* Brand — the only chromatic colour in UI chrome */
-  --primary: 214 100% 60%; /* #3482ff */
-  --primary-hover: 214 100% 50%;
+  --primary: 216.95 100% 60.2%; /* #3482ff */
+  /* Compatibility aliases used by older feature-specific classes. They resolve
+     to the authored brand colour so every primary moment remains #3482ff. */
+  --primary-text: var(--primary);
+  --primary-strong: var(--primary);
+  --primary-strong-hover: 216.95 100% 50%;
+  --primary-hover: 216.95 100% 50%;
   --primary-foreground: 0 0% 100%;
   --accent: 217 91% 60%; /* #3B82F6 — informational callouts, links */
   --navy: 222 72% 26%; /* #0D2D78 */
@@ -44,6 +53,25 @@
   /* Status */
   --success: 142 71% 45%; /* #22C55E — positive financial values */
   --destructive: 0 84% 60%; /* errors, warnings, Blocker severity */
+  --destructive-text: 0 74% 40%; /* same colour, AA-legible as text (6.3:1) */
+
+  /* Severity — BUILD-PROMPTS-PHASE2.md's validated palette, used by the three
+     summary visuals and by nothing else.
+
+     These four are the ONLY place amber and green enter the system, and they
+     are deliberately not interchangeable with --destructive / --success, which
+     mean "this control failed" and "this figure is positive".
+
+     Amber ↔ green cannot be separated reliably by a colour-blind reader, and
+     #CA8A04 measures 3.4:1 on cream — below AA for small text. Both facts have
+     the same mitigation and it is structural, not chromatic: severity always
+     carries its glyph (▲ ● ○ ✓) and its word, and these colours only ever fill
+     a marker. Never set a severity word in one of them. */
+  --severity-blocker: 0 72% 51%; /* #DC2626 ▲ */
+  --severity-delay: 41 96% 40%; /* #CA8A04 ● */
+  --severity-cleanup: var(--muted-foreground); /* warm gray ○ — no chroma, and
+     that IS the low-salience state */
+  --severity-clear: 142 76% 36%; /* #16A34A ✓ */
 
   /* Terracotta is a hex literal, not a token colour: it exists only as the
      endpoint of the display-scale text gradient. Never use it in UI chrome. */
@@ -64,13 +92,15 @@
   --radius-md: 0.25rem;
   --radius-lg: 0.25rem;
 
-  /* Layout */
+  /* Layout — the full site frame from DESIGN.md. */
   --container-max: 82rem; /* 1312px */
 }
 
 .dark {
+  color-scheme: dark;
+
   --background: 0 0% 4%; /* #0A0A0A — warm-undertone near-black, not #000 */
-  --card: 0 0% 5%; /* #0D0D0D */
+  --card: 0 0% 5.1%; /* #0D0D0D */
   --surface: 0 0% 10%; /* #1A1A1A */
   --surface-elevated: 0 0% 14%;
 
@@ -79,11 +109,24 @@
 
   --border: 0 0% 18%;
   --input: 0 0% 18%;
-  --ring: 214 100% 60%;
+  --ring: 216.95 100% 60.2%;
 
-  --primary: 214 100% 60%;
-  --primary-hover: 214 100% 68%; /* hover lightens on dark, not darkens */
+  --primary: 216.95 100% 60.2%;
+  --primary-hover: 216.95 100% 50%;
   --primary-foreground: 0 0% 100%;
+  --primary-text: var(--primary);
+  --primary-strong: var(--primary);
+  --primary-strong-hover: 216.95 100% 50%;
+
+  --destructive: 0 84% 60%;
+  --destructive-text: 0 84% 68%;
+
+  /* Selected for near-black, not flipped from light mode: red holds, amber
+     deepens to #B8860B and green to #15803D so neither glares off #0A0A0A. */
+  --severity-blocker: 0 72% 51%; /* #DC2626 */
+  --severity-delay: 43 89% 38%; /* #B8860B */
+  --severity-cleanup: var(--muted-foreground);
+  --severity-clear: 142 72% 29%; /* #15803D */
 
   --gradient-subtle: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
 }
@@ -101,11 +144,14 @@
   --color-primary: hsl(var(--primary));
   --color-primary-hover: hsl(var(--primary-hover));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-text: hsl(var(--primary-text));
+  --color-primary-strong: hsl(var(--primary-strong));
   --color-accent: hsl(var(--accent));
   --color-navy: hsl(var(--navy));
   --color-purple: hsl(var(--purple));
   --color-success: hsl(var(--success));
   --color-destructive: hsl(var(--destructive));
+  --color-destructive-text: hsl(var(--destructive-text));
   --color-terracotta: var(--terracotta);
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
@@ -162,65 +208,93 @@
 --------------------------------------------------------------------------- */
 
 @layer components {
+  /* Hero — 30 → 36 → 48 → 60, exactly as DESIGN.md §3. */
   .heading-hero {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     line-height: 1.1;
     letter-spacing: -0.03em;
   }
   @media (min-width: 40rem) {
     .heading-hero {
       font-size: 2.25rem;
-    } /* 36px */
+    }
   }
   @media (min-width: 48rem) {
     .heading-hero {
       font-size: 3rem;
-    } /* 48px */
+    }
   }
   @media (min-width: 64rem) {
     .heading-hero {
       font-size: 3.75rem;
-    } /* 60px */
+    }
   }
 
+  /* h1 — 40/44. The question prompt and the single-statement screens. */
+  .heading-h1 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.75rem; /* 28px */
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  @media (min-width: 40rem) {
+    .heading-h1 {
+      font-size: 2rem;
+    } /* 32px */
+  }
+  @media (min-width: 48rem) {
+    .heading-h1 {
+      font-size: 2.25rem;
+    } /* 36px */
+  }
+  @media (min-width: 64rem) {
+    .heading-h1 {
+      font-size: 2.5rem;
+    } /* 40/44 */
+  }
+
+  /* Section — 20 → 24 → 30 → 36. */
   .heading-section {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 1.25rem; /* 20px */
+    font-size: 1.25rem;
     line-height: 1.15;
     letter-spacing: -0.03em;
   }
   @media (min-width: 40rem) {
     .heading-section {
       font-size: 1.5rem;
-    } /* 24px */
+    }
   }
   @media (min-width: 48rem) {
     .heading-section {
       font-size: 1.875rem;
-    } /* 30px */
+    }
   }
   @media (min-width: 64rem) {
     .heading-section {
       font-size: 2.25rem;
-    } /* 36px */
+    }
   }
 
+  /* h3 — 20/28. Card headings. Inter, not serif. */
   .heading-sub {
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 1rem;
-    line-height: 1.35;
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.4;
     letter-spacing: -0.02em;
   }
   @media (min-width: 48rem) {
     .heading-sub {
-      font-size: 1.125rem;
-    }
+      font-size: 1.25rem;
+    } /* 20/28 */
   }
 
   .text-body-lg {
@@ -235,38 +309,60 @@
     }
   }
 
+  /* Body — 14px on small screens, 16px once reading width opens up. */
   .text-body {
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.875rem;
     line-height: 1.65;
   }
-  @media (min-width: 48rem) {
+  @media (min-width: 40rem) {
     .text-body {
       font-size: 1rem;
     }
   }
 
-  .text-nav {
+  /* small — 14/22. Helper text, captions, badge labels. */
+  .text-small {
     font-family: var(--font-sans);
     font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.571;
+  }
+
+  .text-nav {
+    font-family: var(--font-sans);
     font-size: 0.75rem;
+    font-weight: 400;
     line-height: 1.4;
     letter-spacing: 0.04em;
   }
 
-  /* The brand fingerprint — sits above every major section heading. */
+  /* The section label is Inter, not mono: it is the repeated brand signal. */
   .section-label {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 0.625rem; /* 10px */
+    font-size: 0.625rem;
     line-height: 1.4;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: hsl(var(--primary));
   }
 
-  /* Every number, week count, and financial figure. Light weight is intentional. */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.3333; /* 16px */
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .mono-label {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Numerals — IBM Plex Mono 300, always. Sized off the heading scale so a
+     week count sits on the same rhythm as the heading beside it. */
   .number-display {
     font-family: var(--font-mono);
     font-weight: 300;
@@ -274,11 +370,6 @@
     line-height: 1.2;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
-  }
-  @media (min-width: 40rem) {
-    .number-display {
-      font-size: 1.5rem;
-    }
   }
   @media (min-width: 48rem) {
     .number-display {
@@ -289,7 +380,7 @@
   .number-large {
     font-family: var(--font-mono);
     font-weight: 300;
-    font-size: 2rem;
+    font-size: 2.5rem;
     line-height: 1;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
@@ -309,6 +400,17 @@
     color: transparent;
   }
 
+  /* background-clip:text + transparent colour renders as nothing in Windows
+     High Contrast mode, and this is the headline of the whole page. */
+  @media (forced-colors: active) {
+    .text-gradient {
+      background: none;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+      color: CanvasText;
+    }
+  }
+
   /* -------------------------------------------------------------------------
      Buttons — DESIGN.md §4
   ------------------------------------------------------------------------- */
@@ -324,7 +426,8 @@
     letter-spacing: 0.02em;
     line-height: 1;
     border-radius: var(--radius);
-    padding: 0.875rem 1.75rem; /* 14px 28px → clears the 44px touch target */
+    min-height: 2.75rem; /* 44px touch target */
+    padding: 0.875rem 1.75rem; /* 14px 28px */
     border: 1px solid transparent;
     cursor: pointer;
     transition:
@@ -367,11 +470,13 @@
     transform: translateY(0) scale(0.98);
   }
 
+  /* No horizontal padding: a ghost button has no visible box, so its label
+     must start on the container rail like every other first character on the
+     screen. The 44px touch target comes from .btn min-height. */
   .btn-ghost {
     background-color: transparent;
     color: hsl(var(--muted-foreground));
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-inline: 0;
   }
   .btn-ghost:hover {
     color: hsl(var(--foreground));
@@ -389,11 +494,21 @@
     font-family: var(--font-sans);
     font-size: 0.875rem;
     font-weight: 500;
-    color: hsl(var(--primary));
+    color: hsl(var(--primary-text));
     cursor: pointer;
+    border-radius: var(--radius);
     transition:
       gap 0.18s ease,
       opacity 0.18s ease;
+  }
+  .cta-arrow {
+    position: relative;
+  }
+  .cta-arrow::after {
+    content: "";
+    position: absolute;
+    inset-block: -12px;
+    inset-inline: -8px;
   }
   .cta-arrow:hover {
     gap: 0.75rem;
@@ -427,6 +542,12 @@
     border-radius: var(--radius);
     box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
   }
+  /* A soft black shadow says nothing on a near-black ground; DESIGN.md §6 puts
+     dark-mode elevation in luminance stepping instead. */
+  .dark .card-raised {
+    background-color: hsl(var(--surface-elevated));
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.6);
+  }
 
   .badge {
     display: inline-flex;
@@ -434,9 +555,9 @@
     gap: 0.5rem;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
-    padding: 0.5rem 1.25rem; /* 8px 20px */
+    padding: 0.5rem 1.25rem;
     font-family: var(--font-sans);
-    font-size: 0.8125rem; /* 13px */
+    font-size: 0.8125rem;
     line-height: 1;
     color: hsl(var(--foreground));
   }
@@ -446,6 +567,25 @@
     border-radius: 9999px;
     background-color: hsl(var(--primary));
     flex-shrink: 0;
+  }
+
+  /* Severity is carried by shape first and colour second: a filled disc stops
+     you, a ring is open, a bar is a line item. WCAG 1.4.1 — and it survives
+     greyscale, colour-blindness and forced-colors. */
+  .badge-dot--blocker {
+    width: 7px;
+    height: 7px;
+  }
+  .badge-dot--delay {
+    width: 7px;
+    height: 7px;
+    background-color: transparent;
+    border: 2px solid hsl(var(--primary));
+  }
+  .badge-dot--cleanup {
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
   }
 
   .section-divider {
@@ -464,6 +604,96 @@
     background-color: hsl(var(--primary));
     color: #fff;
     flex-shrink: 0;
+  }
+
+  .input-field {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid hsl(var(--input));
+    border-radius: var(--radius-sm);
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .input-field::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+  }
+
+  .hero-lead-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    background-color: hsl(var(--background));
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .hero-lead-row:focus-within {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+  @media (min-width: 40rem) {
+    .hero-lead-row {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .hero-email-input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.625rem 0.875rem;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+  .hero-email-input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .hero-cta-btn {
+    min-height: 2.75rem;
+    padding: 0.625rem 1.5rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background-color: hsl(var(--primary));
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .persona-chip {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 9999px;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .persona-chip[data-active="true"] {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary));
+    color: #fff;
   }
 
   /* -------------------------------------------------------------------------
@@ -490,7 +720,7 @@
     gap: 0.75rem;
     width: 100%;
     min-height: 2.75rem; /* 44px */
-    padding: 0.875rem 1rem;
+    padding: 0.75rem 1rem; /* 12px 16px */
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
@@ -510,7 +740,8 @@
     place-items: center;
     width: 18px;
     height: 18px;
-    margin-top: 0.1875rem;
+    /* Optically centres the 18px control on the first 26px line of the label. */
+    margin-top: 0.25rem;
     flex-shrink: 0;
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
@@ -553,9 +784,12 @@
     opacity: 1;
   }
 
+  /* A 3px 10%-alpha ring is not a visible focus indicator — the input itself
+     is sr-only, so this is the only thing a keyboard user has to go on. */
   .option__input:focus-visible + .option__body {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 
   .option__input:disabled + .option__body {
@@ -571,18 +805,21 @@
     min-width: 0;
     flex: 1;
   }
+  /* body — the answer text is the primary reading target on the screen. */
   .option__label {
     display: block;
     font-family: var(--font-sans);
-    font-size: 0.875rem;
-    line-height: 1.45;
+    font-size: 1rem;
+    line-height: 1.625;
     color: hsl(var(--foreground));
   }
+  /* small */
   .option__description {
     display: block;
     margin-top: 0.25rem;
-    font-size: 0.75rem;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.571;
     color: hsl(var(--muted-foreground));
   }
 
@@ -590,23 +827,18 @@
      Layout — DESIGN.md §5
   ------------------------------------------------------------------------- */
 
-  .container-full {
+  .container-full,
+  .container-tool {
     width: 100%;
     max-width: var(--container-max);
     margin-inline: auto;
-    padding-inline: 1.5rem; /* 24px mobile */
+    padding-inline: 1.5rem;
   }
   @media (min-width: 64rem) {
-    .container-full {
+    .container-full,
+    .container-tool {
       padding-inline: 4rem;
-    } /* 64px desktop */
-  }
-
-  .container-narrow {
-    width: 100%;
-    max-width: 56rem;
-    margin-inline: auto;
-    padding-inline: 1.5rem;
+    }
   }
 
   .container-wide {
@@ -621,13 +853,367 @@
     }
   }
 
+  .container-narrow {
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  /* Measure caps. Nothing stretches the full container just because it can.
+     Copy stops at 64ch; an answer row stops at 560px, because a 1000px-wide
+     row holding three words of text reads as broken. */
+  .measure-copy {
+    max-width: 64ch;
+  }
+  .measure-answers {
+    max-width: 35rem; /* 560px */
+  }
+
+  /* A card that holds nothing but prose: the 64ch measure plus the card own
+     24px padding on each side. Stops it running the full 1040px column with
+     645px of text in it. Cards that carry a second column — the flag cards,
+     with their severity rail — are exempt and use the whole width. */
+  .measure-card {
+    max-width: 44rem; /* 704px */
+  }
+
   .section-padding {
-    padding-block: 2.5rem; /* 40px mobile */
+    padding-block: 2.5rem;
   }
   @media (min-width: 48rem) {
     .section-padding {
       padding-block: 5rem;
-    } /* 80px desktop */
+    }
+  }
+
+  /* The results page is ONE document broken by hairlines, not a stack of
+     marketing sections — and `.section-padding` is sized for the latter. Two
+     adjacent sections each carrying 96px top AND bottom put 192px between two
+     lines of text, which is the "large dead vertical space" Step 14 names: it
+     reads as a rendering fault, not as air.
+
+     Half of it on each side of the divider is the Step 9 scale's 64px section
+     gap, which is what these three give. `.section-padding` is unchanged and
+     still correct on the intro and the index, where a section IS the screen. */
+  .section-gap {
+    padding-block: 1.5rem; /* 24px → 48px between two sections */
+  }
+  @media (min-width: 48rem) {
+    .section-gap {
+      padding-block: 2rem;
+    } /* 32px → 64px */
+  }
+
+  /* The first and last sections have no neighbour on one side, so they carry
+     the whole gap there rather than half of it. */
+  .section-gap-lead {
+    padding-block-start: 3rem; /* 48px */
+  }
+  @media (min-width: 48rem) {
+    .section-gap-lead {
+      padding-block-start: 4rem;
+    } /* 64px */
+  }
+
+  .section-gap-tail {
+    padding-block-end: 3rem;
+  }
+  @media (min-width: 48rem) {
+    .section-gap-tail {
+      padding-block-end: 4rem;
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     The scope strip — the intro's "what we check"
+
+     Nine areas as a quiet mono grid. It is a spec sheet, not a feature list:
+     no icons, no cards, no colour, one hairline per row so the columns line up
+     as a table would. It sets what the check covers before the first question,
+     and it is what fills the intro column now that the old layout left it
+     mostly empty below the fold.
+  ------------------------------------------------------------------------- */
+
+  .check-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-block-start: 1px solid hsl(var(--border));
+  }
+  @media (min-width: 40rem) {
+    .check-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .check-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .check-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    border-block-end: 1px solid hsl(var(--border));
+  }
+
+  .check-item__index {
+    color: hsl(var(--primary-text));
+    flex-shrink: 0;
+  }
+
+  .check-item__label {
+    color: hsl(var(--foreground));
+  }
+
+  /* -------------------------------------------------------------------------
+     The summary band — Step 14, parts B and C
+
+     Three rules hold this whole block together:
+
+       1. Every shape is `aria-hidden` decoration over text that is already on
+          the page. Delete every SVG here and the page still says everything.
+       2. Severity is glyph + word + colour, in that order. `.severity-glyph`
+          is the only place a severity colour is allowed to touch type, and it
+          colours the GLYPH — never the word beside it, which stays ink so it
+          keeps its contrast.
+       3. The numerals are Plex Mono 300, like every other number in the tool.
+  ------------------------------------------------------------------------- */
+
+  /* The KPI row that replaced the headline sentence. Two numbers, no gradient:
+     the gradient was fighting the figures for the eye, so it moved down to the
+     section heading and the numbers own the top of the page on their own. */
+  .stat-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+  @media (min-width: 48rem) {
+    .stat-row {
+      grid-template-columns: repeat(2, minmax(0, auto));
+      justify-content: start;
+      gap: 4rem;
+    }
+  }
+
+  /* Sits inside the <h1>, so it has to undo the heading's own type: the tiles
+     are Plex Mono and Inter, never the h1's weight or tracking. */
+  .stat-tile {
+    display: block;
+    min-width: 0;
+    font-weight: 400;
+    letter-spacing: normal;
+  }
+
+  .stat-value {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 3rem; /* 48px */
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: hsl(var(--foreground));
+    white-space: nowrap;
+  }
+  @media (min-width: 48rem) {
+    .stat-value {
+      font-size: 3.5rem;
+    } /* 56px — the display step */
+  }
+  @media (min-width: 64rem) {
+    .stat-value {
+      font-size: 4.5rem;
+    } /* 72px */
+  }
+
+  .stat-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.625;
+    letter-spacing: normal;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .stat-note {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.571;
+    letter-spacing: normal;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* A number inside a line of prose. Same face as `.number-display`, sized to
+     the text around it rather than to the heading scale. */
+  .mono-figure {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    font-style: normal;
+  }
+
+  /* The severity marker, everywhere it appears outside a <Badge>. Colour is
+     the third channel — the glyph shape carries it in greyscale, and the word
+     carries it for a screen reader. */
+  .severity-glyph {
+    display: inline-block;
+    margin-inline-end: 0.5rem;
+    font-size: 0.75em;
+    line-height: 1;
+    color: hsl(var(--severity-cleanup));
+  }
+  .severity-glyph[data-severity="blocker"] {
+    color: hsl(var(--severity-blocker));
+  }
+  .severity-glyph[data-severity="delay"] {
+    color: hsl(var(--severity-delay));
+  }
+  .severity-glyph[data-severity="clear"] {
+    color: hsl(var(--severity-clear));
+  }
+
+  /* --- The close timeline ------------------------------------------------ */
+
+  .timeline-lane {
+    display: block;
+    width: 100%;
+    height: 0.625rem; /* 10px, the viewBox height, so 1 unit = 1px */
+  }
+
+  .timeline-track {
+    fill: hsl(var(--surface));
+  }
+  .dark .timeline-track {
+    fill: hsl(var(--surface-elevated));
+  }
+
+  .timeline-head {
+    fill: hsl(var(--severity-cleanup));
+  }
+  .timeline-head[data-severity="blocker"] {
+    fill: hsl(var(--severity-blocker));
+  }
+  .timeline-head[data-severity="delay"] {
+    fill: hsl(var(--severity-delay));
+  }
+
+  /* The min–max range, lighter than the head it follows: the founder should be
+     able to see at a glance which part of the bar is the estimate's spread. */
+  .timeline-tail {
+    fill: hsl(var(--severity-cleanup) / 0.35);
+  }
+  .timeline-tail[data-severity="blocker"] {
+    fill: hsl(var(--severity-blocker) / 0.35);
+  }
+  .timeline-tail[data-severity="delay"] {
+    fill: hsl(var(--severity-delay) / 0.35);
+  }
+
+  /* The approval flag has no length to draw, so its tail fades out rather than
+     ending — a bar that stopped somewhere would be a week count we invented. */
+  .timeline-tail[data-open="true"] {
+    mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+  }
+
+  .timeline-axis {
+    display: block;
+    width: 100%;
+    height: 0.375rem;
+  }
+  .timeline-rule,
+  .timeline-tick {
+    stroke: hsl(var(--border));
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- The readiness map ------------------------------------------------- */
+
+  .readiness-svg {
+    display: block;
+    width: 100%;
+    max-width: 15rem; /* 240px — its own viewBox. Never blown up to fill. */
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .readiness-grid {
+    fill: none;
+    stroke: hsl(var(--border));
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .readiness-shape {
+    fill: hsl(var(--primary) / 0.1);
+    stroke: hsl(var(--primary));
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .readiness-vertex {
+    fill: hsl(var(--primary));
+  }
+  [data-severity="blocker"] > .readiness-vertex {
+    fill: hsl(var(--severity-blocker));
+  }
+  [data-severity="delay"] > .readiness-vertex {
+    fill: hsl(var(--severity-delay));
+  }
+  [data-severity="cleanup"] > .readiness-vertex {
+    fill: hsl(var(--severity-cleanup));
+  }
+  [data-severity="clear"] > .readiness-vertex {
+    fill: hsl(var(--severity-clear));
+  }
+
+  /* Drawn, not typeset, so a blocker vertex is a triangle even if the font
+     with ▲ in it never arrives. */
+  .readiness-vertex-glyph {
+    fill: hsl(var(--severity-blocker));
+    stroke: hsl(var(--background));
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  /* --- The benchmark bar -------------------------------------------------- */
+
+  .benchmark-svg {
+    display: block;
+    width: 100%;
+    height: 1.125rem;
+    /* The marker sits at the founder's count, and a count of 0 or 9 puts it on
+       the very edge of the viewBox — where the default `overflow: hidden`
+       would slice half the line off. */
+    overflow: visible;
+  }
+
+  .benchmark-track {
+    fill: hsl(var(--surface));
+  }
+  .dark .benchmark-track {
+    fill: hsl(var(--surface-elevated));
+  }
+
+  /* Muted ink at low alpha rather than the border token: the band has to read
+     against the track in BOTH themes, and in dark the border (18%) is barely a
+     step off the elevated surface (14%) it would sit on. */
+  .benchmark-band {
+    fill: hsl(var(--muted-foreground) / 0.28);
+  }
+
+  .benchmark-marker {
+    stroke: hsl(var(--primary));
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
   }
 
   /* -------------------------------------------------------------------------
@@ -649,6 +1235,121 @@
       48px 48px;
   }
 
+  .dark .bg-grid {
+    background-image:
+      radial-gradient(
+        circle at 1px 1px,
+        hsl(var(--foreground) / 0.08) 1.5px,
+        transparent 0
+      ),
+      linear-gradient(to right, hsl(var(--border) / 0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.45) 1px, transparent 1px);
+  }
+
+  /* -------------------------------------------------------------------------
+     The lead gate
+
+     The content behind the blur is the REAL report, blurred — never placeholder
+     text. People can tell, and a fake blur destroys the trust the page just
+     spent eight questions earning. That is why the gate is a CSS filter over
+     live markup rather than a swap.
+
+     The blur is inert to the keyboard and the pointer, and `aria-hidden`, so a
+     screen-reader or keyboard visitor is never walked through content they
+     cannot read. It is still in the DOM — see LOG.md on why a client-side blur
+     is an acceptable v1 trade and what replaces it.
+  ------------------------------------------------------------------------- */
+
+  .gate-region {
+    position: relative;
+  }
+
+  /* Locked, the region is capped: without this the page runs several thousand
+     pixels of blurred content, which is both slow to composite on a mid-range
+     phone and pointless to scroll.
+
+     The floor on the cap is the gate card itself — roughly 530px with two
+     fields — plus enough blurred content below it to read as a real report
+     rather than a white box on a smudge. At 36rem the card filled the whole
+     region on a phone and there was nothing left to see. */
+  .gate-region[data-locked="true"] {
+    max-height: 50rem;
+    overflow: hidden;
+  }
+  @media (min-width: 48rem) {
+    .gate-region[data-locked="true"] {
+      max-height: 52rem;
+    }
+  }
+
+  .gate-content {
+    transition:
+      filter 400ms ease,
+      opacity 400ms ease;
+  }
+
+  .gate-content[data-locked="true"] {
+    filter: blur(6px);
+    opacity: 0.55;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* The blur has to begin softly. Without a scrim the first line of blurred
+     text sits one pixel below a sharp one, and the edge reads as a rendering
+     bug rather than a deliberate boundary. */
+  .gate-scrim {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 8rem;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--background)) 0%,
+      hsl(var(--background) / 0.72) 45%,
+      hsl(var(--background) / 0) 100%
+    );
+  }
+
+  /* The other end: the cap cuts the content mid-card, so the bottom fades out
+     rather than stopping dead. */
+  .gate-fade {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 10rem;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      hsl(var(--background)) 0%,
+      hsl(var(--background) / 0.85) 40%,
+      hsl(var(--background) / 0) 100%
+    );
+  }
+
+  /* Inline, over the top of the blurred region — never a modal and never fixed.
+     §4's "Never a banner ad" applies to the gate as much as to the pitch: the
+     blur stays visible beside it and below it, so what is being offered is
+     legible as a real page rather than a lightbox. */
+  .gate-card-slot {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    padding-block-start: 2rem;
+  }
+  @media (min-width: 48rem) {
+    .gate-card-slot {
+      padding-block-start: 3rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gate-content {
+      transition: none;
+    }
+  }
+
   .bg-grid-fade {
     mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
     -webkit-mask-image: radial-gradient(
@@ -668,14 +1369,728 @@
     );
   }
 
+  .bg-lines-dark {
+    background-color: #0a0a0a;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgb(255 255 255 / 0.03) 0,
+      rgb(255 255 255 / 0.03) 1px,
+      transparent 1px,
+      transparent 80px
+    );
+  }
+
   .bg-gradient-subtle {
     background: var(--gradient-subtle);
+  }
+
+  /* -------------------------------------------------------------------------
+     Site chrome — Step 15
+
+     The tool stops being a microsite here. The nav and the footer are the
+     marketing site's, so the page reads as part of incentiv.finance rather
+     than as something parked beside it.
+  ------------------------------------------------------------------------- */
+
+  .site-nav {
+    position: sticky;
+    top: 0;
+    /* Above .page-edge-lines (30), so the scan lines pass behind the bar
+       instead of drawing over the wordmark. */
+    z-index: 40;
+    background-color: hsl(var(--background) / 0.92);
+    backdrop-filter: blur(10px);
+    border-block-end: 1px solid hsl(var(--border));
+  }
+
+  .site-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+
+  .site-nav__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+  }
+
+  .site-nav__links {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .site-nav__links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-inline-start: auto;
+      margin-inline-end: 1.5rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .site-nav__links {
+      gap: 2rem;
+      margin-inline-end: 2rem;
+    }
+  }
+
+  .site-nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .site-nav__link:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .site-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  /* The CTA is an anchor, not a button element, so it needs the underline off
+     and the label kept on one line. */
+  .site-nav__cta {
+    display: none;
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  @media (min-width: 48rem) {
+    .site-nav__cta {
+      display: inline-flex;
+    }
+  }
+
+  .site-nav__mobile-toggle {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    cursor: pointer;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+  .site-nav__mobile-toggle:hover {
+    border-color: hsl(var(--primary) / 0.3);
+    background-color: hsl(var(--surface));
+  }
+  @media (min-width: 48rem) {
+    .site-nav__mobile-toggle {
+      display: none;
+    }
+  }
+
+  .site-nav__mobile {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    border-block-start: 1px solid hsl(var(--border) / 0.6);
+    border-block-end: 1px solid hsl(var(--border));
+    background-color: hsl(var(--card));
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
+  }
+  .site-nav__mobile-inner {
+    padding-block: 1rem 1.5rem;
+  }
+  .site-nav__mobile-list {
+    display: grid;
+  }
+  .site-nav__mobile-link {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    border-block-end: 1px solid hsl(var(--border) / 0.6);
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+  }
+  .site-nav__mobile-link:hover {
+    color: hsl(var(--foreground));
+  }
+  .site-nav__mobile-cta {
+    width: 100%;
+    margin-block-start: 1rem;
+    text-decoration: none;
+  }
+  @media (min-width: 48rem) {
+    .site-nav__mobile {
+      display: none;
+    }
+  }
+
+  .site-footer {
+    margin-block-start: auto;
+    padding-block: 3rem;
+    border-block-start: 1px solid hsl(var(--border));
+    background-color: hsl(var(--surface));
+  }
+  @media (min-width: 48rem) {
+    .site-footer {
+      padding-block: 4rem;
+    }
+  }
+
+  .site-footer__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .site-footer__top {
+      grid-template-columns: 20rem minmax(0, 1fr);
+      gap: 5.5rem;
+    }
+  }
+
+  .site-footer__wordmark {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+  }
+
+  .site-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  @media (min-width: 48rem) {
+    .site-footer__columns {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .site-footer__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    font-size: 0.875rem;
+    line-height: 1.571;
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .site-footer__link:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .site-footer__legal {
+    margin-block-start: 3rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* -------------------------------------------------------------------------
+     The split — Step 15
+
+     A 380px editorial rail and a fluid tool column, inside the one container.
+     Below 1024px it is a single column: the rail's heading and lede stay —
+     they are the page's h1 — and its accordion and cross-sell drop, because
+     the step tabs already carry the three groups on a phone, and a product
+     pitch stacked above the first question is the banner CLAUDE.md rules out.
+  ------------------------------------------------------------------------- */
+
+  .tool-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .tool-split {
+      grid-template-columns: 20rem minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+  }
+  @media (min-width: 80rem) {
+    .tool-split {
+      grid-template-columns: 23.75rem minmax(0, 1fr); /* 380px */
+      gap: 5.5rem; /* 88px */
+    }
+  }
+
+  .tool-rail,
+  .tool-column {
+    min-width: 0;
+  }
+
+  .breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .breadcrumb__sep,
+  .breadcrumb__link {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 0.75rem;
+    line-height: 1.333;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .breadcrumb__sep {
+    color: hsl(var(--border));
+  }
+
+  .breadcrumb__link {
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+  }
+  .breadcrumb__link:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .breadcrumb__current {
+    color: hsl(var(--primary));
+  }
+
+  .rail-heading {
+    margin-block-start: 1.5rem;
+  }
+
+  /* The pale highlight behind "investors flag". Drawn from the brand blue at
+     low alpha rather than from a second hue, so it re-resolves in dark mode
+     with everything else. box-decoration-break keeps both lines painted when
+     the phrase wraps, which in a 380px rail it always does. */
+  .rail-highlight {
+    background-color: hsl(var(--primary) / 0.16);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding-inline: 0.15em;
+  }
+
+  .rail-rule,
+  .rail-groups,
+  .rail-cross-sell {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .rail-rule {
+      display: block;
+      height: 1px;
+      margin-block: 2rem;
+      border: 0;
+      background-color: hsl(var(--border));
+    }
+
+    .rail-groups {
+      display: grid;
+    }
+
+    .rail-cross-sell {
+      display: block;
+    }
+  }
+
+  .rail-group__button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: start;
+    cursor: pointer;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.15s ease;
+  }
+  .rail-group__button:hover {
+    color: hsl(var(--foreground));
+  }
+
+  /* The current group is blue AND filled AND expanded — three channels, so
+     colour is never the only thing saying which step you are on. */
+  .rail-group[data-current] .rail-group__button {
+    color: hsl(var(--primary-text));
+  }
+
+  .rail-group__dot {
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 50%;
+    background-color: transparent;
+  }
+  .rail-group[data-current] .rail-group__dot {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary));
+  }
+
+  .rail-group__index {
+    flex-shrink: 0;
+    color: inherit;
+  }
+
+  .rail-group__label {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.571;
+    color: inherit;
+  }
+
+  .rail-group__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0.75rem;
+    padding-inline-start: 1.25rem;
+    border-inline-start: 1px solid hsl(var(--border));
+    list-style: none;
+  }
+
+  .rail-group__item {
+    font-size: 0.875rem;
+    line-height: 1.571;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* -------------------------------------------------------------------------
+     The tool column — step tabs, meta row, the card
+  ------------------------------------------------------------------------- */
+
+  .step-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .step-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    min-height: 2.75rem;
+    padding: 0.75rem 0 0;
+    border: 0;
+    border-block-start: 2px solid hsl(var(--border));
+    background: none;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .step-tab[data-state="current"] {
+    border-block-start-color: hsl(var(--primary));
+  }
+  .step-tab[data-state="done"] {
+    border-block-start-color: hsl(var(--muted-foreground));
+  }
+
+  .step-tab__label {
+    color: hsl(var(--muted-foreground));
+  }
+  .step-tab[data-state="current"] .step-tab__label {
+    color: hsl(var(--foreground));
+  }
+
+  /* Pushed to the bottom of the tab, so the three sub-labels sit on one line
+     when a longer tab label wraps — which "Compliance & timing" does at 375. */
+  .step-tab__sub {
+    margin-block-start: auto;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .tool-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-block: 1.5rem;
+  }
+
+  .tool-meta__promise {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* The build prompt asks for 38/40px here. The spacing scale has no 40 step,
+     so this is 24 then 32, which is the nearest pair on it. */
+  .tool-card {
+    padding: 1.5rem;
+  }
+  @media (min-width: 48rem) {
+    .tool-card {
+      padding: 2rem;
+    }
+  }
+
+  .question-block + .question-block {
+    margin-block-start: 2rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid hsl(var(--border));
+  }
+
+  /* Two across when the column can hold two 240px cards, one when it cannot.
+     No media query: the column's width depends on the rail beside it as much
+     as on the viewport, so the grid measures itself. */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  .tool-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 2rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid hsl(var(--border));
+  }
+
+  .tool-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    margin-inline-start: auto;
+  }
+  @media (min-width: 40rem) {
+    .tool-card__actions {
+      flex-direction: row;
+      align-items: center;
+      width: auto;
+    }
+  }
+
+  /* Amber, from the delay severity token — the one warm hue this system
+     already sanctions. The colour is not the message: the sentence is. */
+  .validation-note {
+    color: hsl(var(--severity-delay));
+  }
+
+  /* -------------------------------------------------------------------------
+     The tally strip — Step 15
+
+     Three cells partitioning the nine check areas. The caption is part of the
+     component, not a nicety: without the denominator said out loud, three
+     numbers under a headline start to read as a mark out of nine, which is
+     the one thing this tool does not do.
+  ------------------------------------------------------------------------- */
+
+  .tally {
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid hsl(var(--border));
+  }
+
+  .tally-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+  }
+
+  /* dt before dd is the only valid order inside a dl, so the cell reverses to
+     put the numeral above its label. */
+  .tally-cell {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .tally-value {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.215;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: hsl(var(--foreground));
+  }
+  @media (min-width: 48rem) {
+    .tally-value {
+      font-size: 1.75rem;
+    } /* 28px — the h2 step */
+  }
+
+  .tally-label {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .tally-caption {
+    margin-block-start: 1rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* -------------------------------------------------------------------------
+     The two link cards under the tool
+  ------------------------------------------------------------------------- */
+
+  .link-cards-section {
+    padding-block: 3rem;
+    border-block-start: 1px solid hsl(var(--border));
+  }
+  @media (min-width: 48rem) {
+    .link-cards-section {
+      padding-block: 4rem;
+    }
+  }
+
+  .link-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .link-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .link-card {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background-color: hsl(var(--card));
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+  .link-card:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    transform: translateY(-2px);
+  }
+
+  .link-card__title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+
+  .link-card__body {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .link-card__arrow {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    color: hsl(var(--primary-text));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link-card:hover {
+      transform: none;
+    }
   }
 }
 
 /* ---------------------------------------------------------------------------
+   Motion
+
+   Two moves only, both of them the same move: content arrives from 8px below
+   at full opacity by the end. Questions use it on every change of question so
+   the flow reads as one surface being re-dealt rather than eight pages; the
+   risk register uses it with a per-card delay so a seven-flag result lands as
+   a list being written out rather than a wall appearing at once.
+
+   Every animation here is decoration over content that is already in the DOM
+   and already legible — `both` fill mode means that if the animation never
+   runs (reduced motion, forced-colors, an old engine) the end state is what
+   shows. Motion is never the thing that makes content visible.
+--------------------------------------------------------------------------- */
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: riseIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Set --stagger to the item's index. Capped at 8 so a long register does not
+   leave the last card waiting half a second after the first. */
+.animate-rise-stagger {
+  animation: riseIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(min(var(--stagger, 0), 8) * 55ms);
+}
+
+/* Re-keyed on every question, so it replays as the founder moves through. */
+.animate-question {
+  animation: riseIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------------------------------------------------------------------------
+   Loading skeletons — the shape of the screen that is coming, in warm gray.
+--------------------------------------------------------------------------- */
+
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton {
+  background-color: hsl(var(--surface));
+  border-radius: var(--radius);
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+.dark .skeleton {
+  background-color: hsl(var(--surface));
+}
+
+/* ---------------------------------------------------------------------------
    Page edge lines — the site's infrastructural signature. DESIGN.md §4.
-   Two 1px rules aligned to the outer edges of container-full (1312px), each
+   Two 1px rules aligned to the outer edges of .container-tool (1312px), each
    carrying a primary-blue light that scans downward on a 5s loop.
    Lives once, at the layout level. Never on an individual page.
 --------------------------------------------------------------------------- */
@@ -697,11 +2112,13 @@
 }
 
 .page-edge-lines__line--left {
-  left: max(16px, calc((100vw - 1312px) / 2));
+  /* Percentage of the fixed parent, not 100vw: vw includes the scrollbar,
+     which would shift both rules off the container's real edges. */
+  left: max(16px, calc((100% - 82rem) / 2));
 }
 
 .page-edge-lines__line--right {
-  right: max(16px, calc((100vw - 1312px) / 2));
+  right: max(16px, calc((100% - 82rem) / 2));
 }
 
 .page-edge-lines__scan {
@@ -740,8 +2157,10 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
 }

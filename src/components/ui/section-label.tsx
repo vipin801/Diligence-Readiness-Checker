@@ -10,7 +10,7 @@ export function SectionLabel({
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"p"> & { as?: "p" | "span" | "div" | "h2" }) {
+}: React.ComponentPropsWithoutRef<"p"> & { as?: "p" | "span" | "div" | "h1" | "h2" }) {
   return (
     <Tag className={cn("section-label", className)} {...props}>
       {children}

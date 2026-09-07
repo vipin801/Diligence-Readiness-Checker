@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Serif_Display, IBM_Plex_Mono, Inter } from "next/font/google";
 import { PageEdgeLines } from "@/components/layout/page-edge-lines";
+import { SITE_NAME, SITE_URL, TOOL_DESCRIPTION, TOOL_TITLE } from "@/lib/brand";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 /**
@@ -32,18 +34,68 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+/**
+ * This tool is built to be forwarded between founders — WhatsApp, a partner's
+ * email, a Slack channel — so the card that unfurls carries the promise, not
+ * the brand. `metadataBase` makes the generated OG image URL absolute, which
+ * every scraper requires.
+ */
 export const metadata: Metadata = {
-  title: "Diligence Readiness Check — Incentiv",
-  description:
-    "Find out what investors will flag in your data room — in 90 seconds. Free, no signup.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: TOOL_TITLE,
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: TOOL_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  keywords: [
+    "cap table",
+    "due diligence",
+    "startup fundraising India",
+    "ESOP pool",
+    "ROC filings",
+    "FEMA FC-GPR",
+    "founder vesting",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_IN",
+    title: TOOL_TITLE,
+    description: TOOL_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TOOL_TITLE,
+    description: TOOL_DESCRIPTION,
+  },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  // Both themes are declared so the browser chrome (address bar, scrollbars)
+  // matches whichever one the visitor is actually looking at.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FDFCF9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0A0A" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // The inline script below sets the theme class before React hydrates.
+      suppressHydrationWarning
       className={`${inter.variable} ${dmSerifDisplay.variable} ${ibmPlexMono.variable} h-full`}
     >
+      <head>
+        {/* Blocking on purpose: it must run before first paint, or a visitor
+            who chose dark sees a cream flash on every navigation. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <PageEdgeLines />
         {children}

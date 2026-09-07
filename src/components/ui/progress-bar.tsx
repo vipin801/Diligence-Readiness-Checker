@@ -5,10 +5,18 @@ type ProgressBarProps = Omit<React.ComponentPropsWithoutRef<"div">, "role"> & {
   value: number;
   max?: number;
   /**
-   * Counter shown above the track, e.g. "Question 3 of 8". Rendered in
-   * IBM Plex Mono because it is a number.
+   * Counter shown above the track, e.g. "3 of 8". Rendered in IBM Plex Mono
+   * because it is a number.
    */
   label?: string;
+  /**
+   * Announce movement to assistive technology. The question flow advances on a
+   * timer after a single-select answer, so without this a screen-reader user
+   * gets a new question with no indication that the position changed.
+   */
+  announce?: boolean;
+  /** What to announce. Defaults to `label`. */
+  announcement?: string;
 };
 
 /**
@@ -19,17 +27,20 @@ export function ProgressBar({
   value,
   max = 100,
   label,
+  announce = false,
+  announcement,
   className,
   ...props
 }: ProgressBarProps) {
   const safeMax = max > 0 ? max : 1;
   const clamped = Math.min(Math.max(value, 0), safeMax);
   const pct = (clamped / safeMax) * 100;
+  const text = announcement ?? label;
 
   return (
     <div className={cn("w-full", className)} {...props}>
       {label && (
-        <p className="mb-2 font-mono text-xs font-light tracking-tight text-muted-foreground tabular-nums">
+        <p className="mono-label mb-2 tabular-nums">
           {label}
         </p>
       )}
@@ -38,6 +49,7 @@ export function ProgressBar({
         aria-valuenow={clamped}
         aria-valuemin={0}
         aria-valuemax={safeMax}
+        aria-valuetext={text}
         aria-label={label ?? "Progress"}
         className="h-1.5 w-full overflow-hidden rounded-[var(--radius)] bg-surface"
       >
@@ -46,6 +58,11 @@ export function ProgressBar({
           style={{ width: `${pct}%` }}
         />
       </div>
+      {announce && text ? (
+        <span role="status" aria-live="polite" className="sr-only">
+          {text}
+        </span>
+      ) : null}
     </div>
   );
 }
