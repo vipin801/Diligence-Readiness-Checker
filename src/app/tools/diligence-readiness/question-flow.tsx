@@ -261,7 +261,11 @@ function QuestionBlock({
 
       {/* `data-question-group` scopes arrow-key movement, so arrows never jump
           out of the question the focus is inside. */}
-      <div data-question-group className="option-grid mt-5">
+      <div
+        data-question-group
+        data-choice-kind={isMultiSelect ? "multiple" : "single"}
+        className="option-grid mt-5"
+      >
         {isMultiSelect
           ? question.options.map((option, index) => (
               <CheckboxOption
@@ -514,7 +518,7 @@ export function QuestionFlow() {
         className="bg-grid bg-grid-fade pointer-events-none absolute inset-x-0 top-0 h-48 opacity-25 md:h-64"
       />
 
-      <div className="relative z-10 flex flex-1 flex-col pb-12 pt-10 md:pb-16 md:pt-[4.75rem]">
+      <div className="relative z-10 flex flex-1 flex-col pb-12 pt-10 md:pb-16 md:pt-16">
         <div className="container-tool">
           <div className="tool-split">
             <ToolRail

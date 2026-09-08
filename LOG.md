@@ -2,18 +2,21 @@
 Running record for any AI agent or developer picking this project up.
 Read this file FIRST, before any other file.
 
-> **Current status, after Step 15 on 2026-09-07: STILL NOT LAUNCH-READY.** Read
-> **Step 15**, then **Step 14**, then **Re-verification — 2026-09-05** before
-> relying on any earlier "complete" or "copy audit passed" claim. Step 15 rebuilt
-> the tool as a page of the marketing site — site nav and footer, a 380px
-> editorial rail, three step tabs, the eight questions regrouped into three
-> steps, no intro splash, and a Blocking / To tidy / Clear tally strip on the
-> register. It is the **first step in this project to have been seen in a
-> browser**: 36 screenshots at four widths in both themes, no console errors and
-> no horizontal overflow. Build, lint and **536 tests** pass. **Every P0 in the
-> re-verification entry is still open** — delivery is still a stub, the delay
-> ranges are still estimates, the copy corrections are unmade, and Step 15 added
-> roughly fourteen new `#` placeholders in the new chrome.
+> **Current status, after Step 17 on 2026-09-08: STILL NOT LAUNCH-READY, but now
+> pushed.** The repository has a remote —
+> `https://github.com/vipin801/Diligence-Readiness-Checker`, branch `main`, **public**
+> (see open question 31) — and `origin/main` carries everything through Step 17.
+> Step 17 committed a layout pass that was sitting undocumented in the working tree:
+> a two-column home hero, the readiness map moved up beside the register headline,
+> restructured flag cards and timeline, a reworked gate crop, and an Incentiv logo in
+> the "Fixed by" slot. **That pass has not been seen in a browser**, so Step 15's
+> screenshot evidence is now out of date for the home page, the register head, the
+> flag cards and the timeline. Build, lint and **536 tests** pass. Read **Step 17**,
+> then **Step 15**, then **Step 14**, then **Re-verification — 2026-09-05** before
+> relying on any earlier "complete" or "copy audit passed" claim. **Every P0 in the
+> re-verification entry is still open** — delivery is still a stub, the delay ranges
+> are still estimates, the copy corrections are unmade, and roughly fourteen `#`
+> placeholders from Step 15 are still dead.
 
 ## Project summary
 
@@ -144,6 +147,8 @@ and no account.
 | `src/components/ui/checkbox-option.tsx` | `CheckboxOption` — multi-select choice (Q2). |
 | `src/components/ui/section-label.tsx` | `SectionLabel` — the mandatory 10px uppercase blue label. |
 | `src/components/ui/input.tsx` | `Input` — `.input-field`; the gate's name and work-email fields. |
+| `src/components/ui/incentiv-logo.tsx` | **Step 17.** `<IncentivLogo />` — the brand mark, rendered in the flag card's "Fixed by" slot when the fix is Incentiv-owned. `alt` is the string it replaces. |
+| `public/incentiv-logo.jpg` | **Step 17.** The 3.5 KB artwork behind that component. |
 | `src/components/ui/icon-box.tsx` | `IconBox` — the fixed 48px brand-blue icon container. |
 | `src/components/ui/persona-chip.tsx` | `PersonaChip` — toggle chip, `aria-pressed`, `data-active`. |
 | `src/app/opengraph-image.tsx` | The 1200×630 social card, generated at build. Inherited by every route. |
@@ -1995,6 +2000,105 @@ re-verification. A remote, per open question 17, is now the one thing ahead of t
     `main` is the base branch. Renaming is one command **before** the first push and
     a small annoyance after it, so it is worth answering now:
     `git branch -m master main`. Say which you want.
+
+### Step 17 — The remote, the first push, and the uncommitted layout pass — 2026-09-08
+
+The human supplied the remote URL that Step 16 was missing —
+`https://github.com/vipin801/Diligence-Readiness-Checker` — and asked for the work
+to be pushed. It is pushed. **Open questions 17 and 18 are now closed by that
+instruction**: the repository lives at that URL, and the branch is `main`.
+
+The tree was not clean when this session started. Eight paths of undocumented
+layout work were sitting in the working tree — six modified, two new — with no
+`### Step` entry describing them. They are described below from the diff, not from
+a brief, because there was no brief in this file to read. **If any of it was
+mid-thought rather than finished, say so and it can be reverted in one commit.**
+
+#### Done
+
+- **Ran the pre-commit gate on the exact tree being committed.** `npm run test` —
+  **536 passed, 7 files**. `npm run build` — exit 0, the same five static routes.
+  Both green before anything was staged.
+- **Added `origin`** and pushed `main`. The remote was empty (`git ls-remote`
+  returned no refs), so this is its first content and there was nothing to
+  reconcile or overwrite.
+- **Committed the working tree** as one commit alongside this entry.
+
+#### The uncommitted work, as read from the diff
+
+| File | What changed |
+|---|---|
+| `src/app/page.tsx` | The home hero splits into a two-column `.home-grid`: intro left (label, an `h1` capped at `14ch`, subhead, stat line, "Start the check →"), and the nine check areas move into a `.home-scope` aside on the right under a "The scope" label and an `h2`. The area labels are now body text, not mono labels. |
+| `src/app/tools/diligence-readiness/results-screen.tsx` | The register head becomes `.results-grid`: stat tiles, tally strip and sublines left, and the **readiness map moves up** into a `.results-aside` beside them instead of waiting in the summary band. Flag cards move to `.flag-layout` / `.flag-details`, with the delay figure and "Fixed by" in a two-column grid. Where `fixedBy` is `incentiv`, the label renders as the new logo component. |
+| `src/app/tools/diligence-readiness/summary-visuals.tsx` | The timeline drops its Tailwind column utilities for named `.close-timeline` / `.timeline-row` / `.timeline-meta` / `.timeline-scale` classes, and loses the duplicate mobile start label. The readiness legend gains `.readiness-legend` and a no-wrap status cell. |
+| `src/lib/summary.ts` | The readiness caption reads "The register **below** is the record", following the map's move above the register. |
+| `src/app/tools/diligence-readiness/question-flow.tsx` | The option grid carries `data-choice-kind="single" \| "multiple"`, so Q2's multi-select can be laid out differently in CSS. Top padding normalised to `pt-16`. |
+| `src/app/globals.css` | The layout classes behind all of the above, plus a change to the gate: the locked region loses its `max-height` cap and the blurred report becomes an absolutely-positioned cropped backdrop, so the **form's** height sets the region's height and validation messages can no longer push the card past the crop. |
+| `src/components/ui/incentiv-logo.tsx` | **New.** `<IncentivLogo />` — `next/image`, `unoptimized`, 200×200, `alt="Incentiv"`, class `.incentiv-logo`. |
+| `public/incentiv-logo.jpg` | **New.** 3.5 KB brand artwork behind that component. |
+
+The gate still gates: `.gate-content[data-locked="true"]` keeps its blur, its
+opacity and its `user-select: none`, and the split by content type from Step 14 is
+untouched. The `alt` on the logo is exactly the string it replaces
+(`FIXED_BY_LABEL.incentiv` is `"Incentiv"`), so the register reads the same to a
+screen reader as it did before.
+
+#### Files created and changed
+
+- `LOG.md` — this entry, the file map rows for the two new files, and the status banner.
+- No source file was touched by me this session. The commit carries the human's
+  working tree as it stood, plus this entry.
+
+#### Decisions made
+
+| Decision | Choice | Why |
+|---|---|---|
+| Commit granularity | **One commit** for the layout pass + this entry | Same reasoning as Step 16: the changes arrived as one undifferentiated working tree, and inventing a sequence for them would be fiction. |
+| Whether to review before committing | **Read the whole diff first, committed second** | The changes were not mine and were undescribed. Committing unread work is how a broken gate or a lost `alt` ships. |
+| Commit message | Names the layout pass, not "Step 17" alone | The step number means nothing to anyone reading `git log` from the remote. |
+| Push target | `main` → `origin/main`, tracking set | The remote was empty and the local branch was already `main`. |
+
+#### Verified
+
+- `npm run test` **536 passed** · `npm run build` exit 0 — both before the commit.
+- `git ls-remote` on the supplied URL: reachable, **no refs**, so nothing was overwritten.
+- Push completed; `origin/main` now matches local `main`.
+
+#### Known gaps and TODO
+
+- **The layout pass has not been seen in a browser by me.** Step 15's 36-screenshot
+  pass is now out of date: the home page, the register head, the flag cards and the
+  timeline all moved. Nothing here was re-shot at 375/768/1024/1440 in both themes.
+  The tests pass, but 536 unit tests do not see a two-column grid collapse.
+- **The repository is public.** `github.com/vipin801/Diligence-Readiness-Checker` is
+  reachable without credentials, which means `tool-spec-v1.md`, `DESIGN.md`,
+  `funding-readiness-product-thinking-v1.md` and this log — the unlaunched
+  positioning of an Incentiv funnel, its flag table and its pitch copy — are now
+  public too. That was open question 17's "private is the safe default", answered
+  the other way. See open question 31 before adding anything further.
+- **Nothing about launch readiness changed.** Every P0 in the 2026-09-05
+  re-verification is still open, the five outbound URLs are still `#`, delivery is
+  still a stub and the delay ranges are still estimates.
+
+#### Next step
+
+Unchanged: the P0 human decisions from the 2026-09-05 re-verification. Ahead of
+them now sits a browser pass over the moved layout, and open question 31.
+
+#### Open questions for the human — new in this step
+
+31. **The repository is public. Was that deliberate?** The push succeeded against a
+    URL that resolves anonymously, so the spec, the design system, the product
+    rationale, the eleven flag rules and every pitch variant are readable by anyone
+    with the link — including this log, which records what is not finished. If it
+    should be private: GitHub → Settings → General → Danger Zone → Change
+    visibility. Nothing in the repository is a secret in the credentials sense — no
+    keys, no `.env`, no lead data — so this is a positioning call, not a security
+    incident.
+32. **Was the layout pass finished?** It is committed as found. The map moving above
+    the register is the largest single change — the summary band now leads with the
+    timeline alone, and the caption was updated to match — and it is the one most
+    likely to have been mid-thought. Confirm, or name what to revert.
 
 ## Earlier open questions for the human — historical context
 1. **The `.section-label` role changed.** Step 9's brief assigns eyebrow labels to

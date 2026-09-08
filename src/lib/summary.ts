@@ -462,7 +462,7 @@ export function buildReadiness(flags: readonly Flag[]): ReadinessView {
   return {
     axes,
     caption:
-      "A shape, not a measurement: the area inside it grows with the square of each value, so it overstates the difference between a clear axis and a flagged one. The register above is the record.",
+      "A shape, not a measurement: the area inside it grows with the square of each value, so it overstates the difference between a clear axis and a flagged one. The register below is the record.",
   };
 }
 

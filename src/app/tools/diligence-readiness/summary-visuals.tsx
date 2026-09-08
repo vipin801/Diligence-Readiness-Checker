@@ -152,12 +152,12 @@ export function CloseTimeline({ timeline }: { timeline: TimelineView }) {
   }
 
   return (
-    <div>
-      <ul className="grid gap-2">
+    <div className="close-timeline">
+      <ul className="grid gap-4">
         {timeline.lanes.map((lane) => (
           <li
             key={lane.flagId}
-            className="grid gap-2 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_auto] md:items-center md:gap-6"
+            className="timeline-row"
             title={lane.tooltip}
           >
             <p className="text-small min-w-0 text-foreground">
@@ -179,7 +179,7 @@ export function CloseTimeline({ timeline }: { timeline: TimelineView }) {
               severity={lane.severity}
             />
 
-            <p className="text-small flex items-baseline gap-2 md:justify-end">
+            <p className="timeline-meta text-small">
               <span className="mono-figure text-foreground">
                 {lane.weeksLabel}
               </span>
@@ -193,9 +193,9 @@ export function CloseTimeline({ timeline }: { timeline: TimelineView }) {
 
       {/* The axis. Relative, always: the tool never asks for a close date, so
           there is no calendar anywhere on this rail. */}
-      <div className="mt-3 md:grid md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)_auto] md:gap-6">
-        <p className="mono-label hidden md:block">{timeline.startLabel}</p>
-        <div className="md:col-start-2">
+      <div className="timeline-scale mt-4">
+        <p className="mono-label timeline-start">{timeline.startLabel}</p>
+        <div className="timeline-ticks">
           <svg
             aria-hidden="true"
             className="timeline-axis"
@@ -222,7 +222,6 @@ export function CloseTimeline({ timeline }: { timeline: TimelineView }) {
               </span>
             ))}
           </div>
-          <p className="mono-label mt-1 md:hidden">{timeline.startLabel}</p>
         </div>
       </div>
 
@@ -327,14 +326,14 @@ export function ReadinessMap({ readiness }: { readiness: ReadinessView }) {
 
       {/* The text equivalent, and the reason the shape is allowed to exist:
           every axis carries its status word whether or not the polygon reads. */}
-      <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+      <ul className="readiness-legend mt-4">
         {axes.map((axis) => (
           <li
             key={axis.id}
-            className="text-small flex items-baseline justify-between gap-4 border-b border-border/60 pb-2"
+            className="text-small flex items-baseline justify-between gap-2 border-b border-border/60 pb-2"
           >
             <span className="text-foreground">{axis.label}</span>
-            <span className="text-muted-foreground">
+            <span className="whitespace-nowrap text-muted-foreground">
               <span
                 aria-hidden="true"
                 className="severity-glyph"

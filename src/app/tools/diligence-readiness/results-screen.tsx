@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { Badge, Button, Card, SectionLabel } from "@/components/ui";
+import { IncentivLogo } from "@/components/ui/incentiv-logo";
 import { track } from "@/lib/analytics";
 import type { Urgency } from "@/lib/evaluate";
 import type { FlagId } from "@/lib/flags";
@@ -76,7 +77,7 @@ function FlagCard({
       className="animate-rise-stagger p-6"
       style={{ "--stagger": index } as React.CSSProperties}
     >
-      <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-8">
+      <div className="flag-layout">
         <div className="min-w-0">
           {/* Provenance first: the flag exists because of this answer. */}
           <p className={MICRO_LABEL}>You answered</p>
@@ -97,10 +98,10 @@ function FlagCard({
         {/* Below 640px the rail is a row under the finding rather than a third
             stacked block — seven flags stacked three-deep each is a very long
             page on a 375px screen. */}
-        <div className="border-t border-border pt-6 sm:w-48 sm:shrink-0 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-8">
+        <div className="flag-details">
           <Badge tone={flag.severity}>{flag.severityLabel}</Badge>
 
-          <div className="mt-4 flex flex-wrap items-start gap-x-8 gap-y-4 sm:mt-6 sm:block">
+          <div className="mt-4 grid grid-cols-2 items-start gap-6">
             <div className="min-w-0">
               <p
                 className={`${prominent ? "number-large" : "number-display"} text-foreground`}
@@ -112,11 +113,15 @@ function FlagCard({
               </p>
             </div>
 
-            <div className="min-w-0 sm:mt-6">
+            <div className="min-w-0">
               <p className={MICRO_LABEL}>Fixed by</p>
-              <p className="text-body mt-1 text-foreground">
-                {flag.fixedByLabel}
-              </p>
+              <div className="text-body mt-2 text-foreground">
+                {flag.fixedBy === "incentiv" ? (
+                  <IncentivLogo />
+                ) : (
+                  flag.fixedByLabel
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -278,7 +283,7 @@ export function ResultsScreen({
   ]);
 
   return (
-    <main className="relative flex flex-1 flex-col">
+    <main className="results-page relative flex flex-1 flex-col">
       <div
         aria-hidden="true"
         className="bg-grid bg-grid-fade pointer-events-none absolute inset-x-0 top-0 h-56 opacity-25 md:h-80"
@@ -291,53 +296,67 @@ export function ResultsScreen({
               heading's accessible name, so nothing is lost to a screen reader. */}
       <section className="section-gap section-gap-lead relative z-10">
         <div className="container-tool">
-          <div
-            className="animate-rise"
-            // The register replaces the question screen in place, with no
-            // navigation, so the outcome is announced rather than silently
-            // swapped in. Focus lands on the headline for the same reason.
-            role="status"
-            aria-live="polite"
-          >
-            <SectionLabel>
-              {isClean ? "Your result" : "Your risk register"}
-            </SectionLabel>
-            <h1
-              ref={headlineRef}
-              tabIndex={-1}
-              aria-label={headlineText(results.headline)}
-              className="mt-6 outline-none"
+          <div className="results-grid">
+            <div
+              className="animate-rise"
+              // The register replaces the question screen in place, with no
+              // navigation, so the outcome is announced rather than silently
+              // swapped in. Focus lands on the headline for the same reason.
+              role="status"
+              aria-live="polite"
             >
-              <StatTiles tiles={results.summary.stats} />
-            </h1>
-            {/* Step 15 — the tally strip. The two tiles above say how much
-                and how long; this says how it is distributed across the nine
-                areas the check covers, which is the shape of the problem
-                rather than its size. Not a score: the three cells partition
-                one stated total, and the caption names it. */}
-            <div className="measure-card mt-8">
-              <TallyStrip tally={results.summary.tally} />
-            </div>
+              <SectionLabel>
+                {isClean ? "Your result" : "Your risk register"}
+              </SectionLabel>
+              <h1
+                ref={headlineRef}
+                tabIndex={-1}
+                aria-label={headlineText(results.headline)}
+                className="mt-6 outline-none"
+              >
+                <StatTiles tiles={results.summary.stats} />
+              </h1>
+              {/* Step 15 — the tally strip. The two tiles above say how much
+                  and how long; this says how it is distributed across the nine
+                  areas the check covers, which is the shape of the problem
+                  rather than its size. Not a score: the three cells partition
+                  one stated total, and the caption names it. */}
+              <div className="mt-8">
+                <TallyStrip tally={results.summary.tally} />
+              </div>
 
-            <p className="text-body measure-copy mt-8 text-muted-foreground">
-              {results.subline}
-            </p>
-
-            <div className="measure-copy mt-6 grid gap-3 border-l-2 border-primary/25 pl-6">
-              {results.severityLine ? (
-                <p className="text-body text-foreground">
-                  {results.severityLine}
-                </p>
-              ) : null}
-              {results.soloEmphasis ? (
-                <p className="text-body text-muted-foreground">
-                  {results.soloEmphasis}
-                </p>
-              ) : null}
-              <p className="text-body text-muted-foreground">
-                {results.urgencyLine}
+              <p className="text-small measure-copy mt-6 text-muted-foreground">
+                {results.subline}
               </p>
+
+              <div className="measure-copy mt-6 grid gap-3 border-l-2 border-primary/25 pl-4">
+                {results.severityLine ? (
+                  <p className="text-body text-foreground">
+                    {results.severityLine}
+                  </p>
+                ) : null}
+                {results.soloEmphasis ? (
+                  <p className="text-body text-muted-foreground">
+                    {results.soloEmphasis}
+                  </p>
+                ) : null}
+                <p className="text-body text-muted-foreground">
+                  {results.urgencyLine}
+                </p>
+              </div>
             </div>
+
+            {/* The readiness map is the summary's spatial artefact, so it uses
+                the otherwise empty upper-right column instead of making the
+                reader travel through a second section before seeing it. */}
+            <aside className="results-aside animate-rise" aria-labelledby="readiness-heading">
+              <h2 id="readiness-heading" className="heading-sub text-foreground">
+                {SUMMARY_COPY.readinessTitle}
+              </h2>
+              <div className="mt-4">
+                <ReadinessMap readiness={results.summary.readiness} />
+              </div>
+            </aside>
           </div>
         </div>
       </section>
@@ -358,7 +377,7 @@ export function ResultsScreen({
             {SUMMARY_COPY.heading}
           </h2>
 
-          <div className="mt-8 grid gap-12 md:mt-12 md:gap-16">
+          <div className="results-grid mt-8">
             <div>
               <h3 className="heading-sub text-foreground">
                 {SUMMARY_COPY.timelineTitle}
@@ -368,26 +387,12 @@ export function ResultsScreen({
               </div>
             </div>
 
-            {/* Map and benchmark side by side beneath the rail, stacking under
-                768px — the radar needs its own square and the scale needs its
-                own width, and neither reads at half a phone. */}
-            <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-              <div>
-                <h3 className="heading-sub text-foreground">
-                  {SUMMARY_COPY.readinessTitle}
-                </h3>
-                <div className="mt-6">
-                  <ReadinessMap readiness={results.summary.readiness} />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="heading-sub text-foreground">
-                  {SUMMARY_COPY.benchmarkTitle}
-                </h3>
-                <div className="mt-6">
-                  <BenchmarkBar benchmark={results.summary.benchmark} />
-                </div>
+            <div className="results-aside">
+              <h3 className="heading-sub text-foreground">
+                {SUMMARY_COPY.benchmarkTitle}
+              </h3>
+              <div className="mt-6">
+                <BenchmarkBar benchmark={results.summary.benchmark} />
               </div>
             </div>
           </div>
@@ -533,8 +538,8 @@ export function ResultsScreen({
               {/* The split. The hinge of the page, and where the pitch lives. */}
               <section className="section-gap relative z-10">
                 <div className="container-tool">
-                  <div className="grid gap-12 md:gap-16">
-                    <div>
+                  <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+                    <div className="lg:col-span-2">
                       <SectionLabel>The split</SectionLabel>
                       <h2 className="heading-section mt-4 text-foreground">
                         What you can close yourself, and what needs a system
@@ -580,7 +585,7 @@ export function ResultsScreen({
                 <div aria-hidden="true" className="gate-scrim" />
                 <div aria-hidden="true" className="gate-fade" />
                 <div className="gate-card-slot z-20">
-                  <div className="container-tool">
+                  <div className="container-tool flex justify-center">
                     <ReportGate
                       issueCount={results.issueCount}
                       gatedGuidanceCount={gatedGuidanceCount}
@@ -608,7 +613,7 @@ export function ResultsScreen({
               that promises "no wall" is only ever shown where that is true. */}
       <section className="section-gap section-gap-tail relative z-10">
         <div className="container-tool">
-          <div>
+          <div className={isClean ? "grid gap-6" : "results-actions"}>
             {isClean ? (
               <EmailCapture
                 copy={conversion.emailCapture}
@@ -629,7 +634,7 @@ export function ResultsScreen({
               </Button>
             </div>
 
-            <p className="text-body mt-8 measure-copy text-muted-foreground">
+            <p className="text-small measure-copy text-muted-foreground">
               This check is free, and you can run it again whenever something on
               your cap table changes.
             </p>

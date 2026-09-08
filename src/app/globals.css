@@ -708,6 +708,8 @@
 
   .option {
     position: relative;
+    display: flex;
+    min-width: 0;
   }
 
   .option__input:focus-visible {
@@ -716,9 +718,10 @@
 
   .option__body {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
     width: 100%;
+    height: 100%;
     min-height: 2.75rem; /* 44px */
     padding: 0.75rem 1rem; /* 12px 16px */
     background-color: hsl(var(--card));
@@ -740,8 +743,6 @@
     place-items: center;
     width: 18px;
     height: 18px;
-    /* Optically centres the 18px control on the first 26px line of the label. */
-    margin-top: 0.25rem;
     flex-shrink: 0;
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
@@ -925,15 +926,109 @@
     }
   }
 
-  /* -------------------------------------------------------------------------
-     The scope strip — the intro's "what we check"
+  /* A shared column system connects the summary, charts and finding details. */
+  .results-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
 
-     Nine areas as a quiet mono grid. It is a spec sheet, not a feature list:
-     no icons, no cards, no colour, one hairline per row so the columns line up
-     as a table would. It sets what the check covers before the first question,
-     and it is what fills the intro column now that the old layout left it
-     mostly empty below the fold.
-  ------------------------------------------------------------------------- */
+  .results-grid > * {
+    min-width: 0;
+  }
+
+  .results-aside {
+    border-block-start: 1px solid hsl(var(--border));
+    padding-block-start: 2rem;
+  }
+
+  .flag-layout {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .flag-details {
+    min-width: 0;
+    border-block-start: 1px solid hsl(var(--border));
+    padding-block-start: 1.5rem;
+  }
+
+  .results-actions {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .results-grid,
+    .flag-layout {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      column-gap: 3rem;
+    }
+
+    .results-aside,
+    .flag-details {
+      border-block-start: 0;
+      border-inline-start: 1px solid hsl(var(--border));
+      padding-block-start: 0;
+      padding-inline-start: 2rem;
+    }
+
+    .results-actions {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  /* Front-page introduction paired with the scope of the check. */
+  .home-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .home-intro,
+  .home-scope {
+    min-width: 0;
+  }
+
+  .home-scope {
+    padding: 1.5rem;
+    background-color: hsl(var(--surface) / 0.6);
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+  }
+
+  .home-scope .check-item:last-child {
+    border-block-end: 0;
+    padding-block-end: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .home-grid {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 4rem;
+    }
+
+    .home-intro {
+      padding-block: 2rem;
+    }
+
+    .home-scope {
+      padding: 2rem;
+    }
+  }
+
+  .incentiv-logo {
+    display: block;
+    width: 7rem;
+    max-width: 100%;
+    height: 2.25rem;
+    object-fit: cover;
+    object-position: center 46%;
+    border-radius: var(--radius);
+  }
 
   .check-grid {
     display: grid;
@@ -988,14 +1083,12 @@
      section heading and the numbers own the top of the page on their own. */
   .stat-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 1.5rem;
   }
   @media (min-width: 48rem) {
     .stat-row {
-      grid-template-columns: repeat(2, minmax(0, auto));
-      justify-content: start;
-      gap: 4rem;
+      gap: 2rem;
     }
   }
 
@@ -1012,7 +1105,7 @@
     display: block;
     font-family: var(--font-mono);
     font-weight: 300;
-    font-size: 3rem; /* 48px */
+    font-size: 2.5rem;
     line-height: 1.05;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
@@ -1034,7 +1127,7 @@
     display: block;
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 0.875rem;
     line-height: 1.625;
     letter-spacing: normal;
     color: hsl(var(--muted-foreground));
@@ -1080,6 +1173,59 @@
   }
 
   /* --- The close timeline ------------------------------------------------ */
+
+  .close-timeline {
+    container-type: inline-size;
+  }
+
+  .timeline-row {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    align-items: baseline;
+  }
+
+  .timeline-scale {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .timeline-start {
+    order: 1;
+  }
+
+  /* Equal tracks across lanes and axis keep every duration on one scale.
+     The owner may wrap without changing the corresponding bar's width. */
+  @container (min-width: 36rem) {
+    .timeline-row,
+    .timeline-scale {
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) 8rem;
+      column-gap: 1rem;
+      align-items: center;
+    }
+
+    .timeline-meta {
+      display: block;
+      text-align: end;
+    }
+
+    .timeline-meta > span {
+      display: block;
+    }
+
+    .timeline-start {
+      order: 0;
+    }
+
+    .timeline-ticks {
+      grid-column: 2;
+    }
+  }
 
   .timeline-lane {
     display: block;
@@ -1143,6 +1289,18 @@
     max-width: 15rem; /* 240px — its own viewBox. Never blown up to fill. */
     height: auto;
     margin-inline: auto;
+  }
+
+  .readiness-legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+  }
+
+  @media (max-width: 23rem) {
+    .readiness-legend {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .readiness-grid {
@@ -1264,22 +1422,10 @@
     position: relative;
   }
 
-  /* Locked, the region is capped: without this the page runs several thousand
-     pixels of blurred content, which is both slow to composite on a mid-range
-     phone and pointless to scroll.
-
-     The floor on the cap is the gate card itself — roughly 530px with two
-     fields — plus enough blurred content below it to read as a real report
-     rather than a white box on a smudge. At 36rem the card filled the whole
-     region on a phone and there was nothing left to see. */
+  /* The form determines the locked region's height, including validation
+     messages. The report remains a cropped backdrop behind it. */
   .gate-region[data-locked="true"] {
-    max-height: 50rem;
     overflow: hidden;
-  }
-  @media (min-width: 48rem) {
-    .gate-region[data-locked="true"] {
-      max-height: 52rem;
-    }
   }
 
   .gate-content {
@@ -1289,6 +1435,9 @@
   }
 
   .gate-content[data-locked="true"] {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
     filter: blur(6px);
     opacity: 0.55;
     user-select: none;
@@ -1333,14 +1482,12 @@
      blur stays visible beside it and below it, so what is being offered is
      legible as a real page rather than a lightbox. */
   .gate-card-slot {
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    padding-block-start: 2rem;
+    position: relative;
+    padding-block: 2rem 5rem;
   }
   @media (min-width: 48rem) {
     .gate-card-slot {
-      padding-block-start: 3rem;
+      padding-block: 3rem 6rem;
     }
   }
 
@@ -1605,7 +1752,7 @@
   /* -------------------------------------------------------------------------
      The split — Step 15
 
-     A 380px editorial rail and a fluid tool column, inside the one container.
+     An editorial rail and a fluid tool column, inside the one container.
      Below 1024px it is a single column: the rail's heading and lede stay —
      they are the page's h1 — and its accordion and cross-sell drop, because
      the step tabs already carry the three groups on a phone, and a product
@@ -1626,8 +1773,8 @@
   }
   @media (min-width: 80rem) {
     .tool-split {
-      grid-template-columns: 23.75rem minmax(0, 1fr); /* 380px */
-      gap: 5.5rem; /* 88px */
+      grid-template-columns: 21rem minmax(0, 1fr);
+      gap: 4rem;
     }
   }
 
@@ -1857,12 +2004,18 @@
     border-block-start: 1px solid hsl(var(--border));
   }
 
-  /* Two across when the column can hold two 240px cards, one when it cannot.
-     No media query: the column's width depends on the rail beside it as much
-     as on the viewport, so the grid measures itself. */
+  /* Two across only when both answer rows have enough room to remain on one
+     line. At narrower widths the choices become one aligned vertical list
+     instead of squeezing into uneven, wrapped cards. No media query: the
+     column's width depends on the rail beside it as much as on the viewport,
+     so the grid measures itself. */
   .option-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(26rem, 100%), 1fr)
+    );
+    align-items: stretch;
     gap: 0.75rem;
   }
 
@@ -1877,12 +2030,21 @@
     border-block-start: 1px solid hsl(var(--border));
   }
 
+  /* Short checkbox labels fit two equal columns without wrapping. */
+  .option-grid[data-choice-kind="multiple"] {
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  }
+
+  .tool-card__footer > .btn-ghost {
+    padding-inline: 0 0.5rem;
+  }
+
   .tool-card__actions {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
-    width: 100%;
+    width: auto;
     margin-inline-start: auto;
   }
   @media (min-width: 40rem) {
