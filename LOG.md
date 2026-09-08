@@ -2,21 +2,28 @@
 Running record for any AI agent or developer picking this project up.
 Read this file FIRST, before any other file.
 
-> **Current status, after Step 17 on 2026-09-08: STILL NOT LAUNCH-READY, but now
-> pushed.** The repository has a remote —
-> `https://github.com/vipin801/Diligence-Readiness-Checker`, branch `main`, **public**
-> (see open question 31) — and `origin/main` carries everything through Step 17.
-> Step 17 committed a layout pass that was sitting undocumented in the working tree:
-> a two-column home hero, the readiness map moved up beside the register headline,
-> restructured flag cards and timeline, a reworked gate crop, and an Incentiv logo in
-> the "Fixed by" slot. **That pass has not been seen in a browser**, so Step 15's
-> screenshot evidence is now out of date for the home page, the register head, the
-> flag cards and the timeline. Build, lint and **536 tests** pass. Read **Step 17**,
-> then **Step 15**, then **Step 14**, then **Re-verification — 2026-09-05** before
-> relying on any earlier "complete" or "copy audit passed" claim. **Every P0 in the
-> re-verification entry is still open** — delivery is still a stub, the delay ranges
-> are still estimates, the copy corrections are unmade, and roughly fourteen `#`
-> placeholders from Step 15 are still dead.
+> **Current status, after Step 18 on 2026-09-08: LIVE IN PRODUCTION AND STILL NOT
+> LAUNCH-READY.** The tool is deployed, unprotected, at
+> **https://diligence-readiness-check.vercel.app** — Vercel team `incentiv2`, project
+> `diligence-readiness-check` — and the GitHub repository is connected, so **every push
+> to `main` now publishes to production by itself**. Read **Step 18** first: the
+> production target was not the intent, and the OG card on the live page 404s.
+> The code lives at `https://github.com/vipin801/Diligence-Readiness-Checker`, branch
+> `main`, **public** (open question 31).
+>
+> Step 17 committed a layout pass that had been sitting undocumented in the working
+> tree: a two-column home hero, the readiness map moved up beside the register
+> headline, restructured flag cards and timeline, a reworked gate crop, and an
+> Incentiv logo in the "Fixed by" slot. **That pass has never been seen in a
+> browser**, so Step 15's screenshot evidence is out of date for the home page, the
+> register head, the flag cards and the timeline — and it is what is live.
+>
+> Build, lint and **536 tests** pass. Read **Step 18**, then **Step 17**, then **Step
+> 15**, then **Step 14**, then **Re-verification — 2026-09-05** before relying on any
+> earlier "complete" or "copy audit passed" claim. **Every P0 in the re-verification
+> entry is still open** — delivery is still a stub, the delay ranges are still
+> estimates, the copy corrections are unmade, and roughly fourteen `#` placeholders
+> from Step 15 are still dead.
 
 ## Project summary
 
@@ -2099,6 +2106,98 @@ them now sits a browser pass over the moved layout, and open question 31.
     the register is the largest single change — the summary band now leads with the
     timeline alone, and the caption was updated to match — and it is the one most
     likely to have been mid-thought. Confirm, or name what to revert.
+
+### Step 18 — Live on Vercel — 2026-09-08
+
+The human said "now to vercel". The tool is deployed and publicly reachable at
+**https://diligence-readiness-check.vercel.app**. Read the two warnings under
+*Known gaps* before treating that as good news: **the deploy landed on the
+production target, not a preview**, and the OG card on the live page is broken.
+
+#### Done
+
+- **Linked** `incentiv2/diligence-readiness-check` (project
+  `prj_yauAmNjyEfKZEYu9hfFpNtrQILFQ`, team `Incentiv`). The name follows the
+  siblings already in that scope — `esop-pool-calculator`,
+  `founder-agreement-tool`, `sar-agreement-maker` and four more — and matches
+  `package.json`'s own `name`.
+- **The GitHub repository was connected automatically** by `vercel link`, which
+  found `origin` and wired it up. **Every future push to `main` now triggers a
+  production deployment on its own.** Nobody has to run a deploy command again,
+  and nobody gets asked first.
+- **Deployed.** Framework detected as Next.js, Node 24.x, root `.`, build
+  `npm run build`. State **READY**.
+- **Smoke-tested the live URL anonymously**: `/` 200, `/tools/diligence-readiness`
+  200, `/opengraph-image` 200, and the served `<title>` is
+  `Diligence Readiness Check — Incentiv`.
+
+#### Files created and changed
+
+- `LOG.md` — this entry and the status banner.
+- `.vercel/project.json` — written by the CLI, **gitignored** (`.gitignore` has
+  covered `.vercel` since Step 1). The project link is local to this machine; a
+  fresh clone re-links.
+- No source file changed. The deployment is commit `64d6dc7` exactly.
+
+#### Decisions made
+
+| Decision | Choice | Why |
+|---|---|---|
+| Scope | `incentiv2` (**Incentiv**), not a personal account | It is the only team on the account and it already holds every other Incentiv tool. |
+| Project name | `diligence-readiness-check` | Matches `package.json` and the kebab-case convention of the seven sibling tools. |
+| Env vars | **None set** | `NEXT_PUBLIC_SITE_URL` is the only one the code reads, and setting it changes the canonical URL as well as the OG origin — an SEO decision, not a deploy detail. Left for the human. See below. |
+| Deploy target | Preview was intended; **production is what happened** | Recorded honestly rather than quietly. See *Known gaps*. |
+
+#### Verified
+
+- `readyState: READY`, `target: production`, deployment
+  `dpl_HbyGhRkucpjw6pKy2ryQF3c6cn3m`.
+- Three routes 200 over plain `curl`, i.e. with no credentials — the production
+  deployment has **no access protection**.
+- `https://incentiv.finance/opengraph-image` → **404**.
+
+#### Known gaps and TODO
+
+- **The deploy went to production, and nothing asked first.** `vercel deploy` with
+  no `--prod` normally makes a preview. Because the checked-out branch is `main`
+  and `main` is the project's production branch, the CLI targeted production and
+  aliased `diligence-readiness-check.vercel.app`. The intent was a preview; the
+  result is a live site. **The tool is not launch-ready** — the banner at the top
+  of this file lists why — and it is now readable by anyone with the URL. Undo is
+  one of: delete the deployment, turn on Vercel Authentication (Project → Settings
+  → Deployment Protection) so only the team can open it, or leave it up
+  deliberately. Ask before assuming the third.
+- **Every social share of the live URL has a broken image.** `metadataBase` falls
+  back to `https://incentiv.finance` when `NEXT_PUBLIC_SITE_URL` is unset, so the
+  page advertises `https://incentiv.finance/opengraph-image` — verified 404 today.
+  This is open question 29, now observed in production rather than predicted. One
+  command fixes it, and it is only correct once the final origin is decided:
+  `vercel env add NEXT_PUBLIC_SITE_URL production`, then redeploy.
+- **`main` is now a deploy trigger.** The `git push` that carries this entry will
+  itself rebuild production. Same commit content, so no behaviour changes — but
+  from here on, committing to `main` publishes.
+- **The layout pass from Step 17 is live without ever having been seen in a
+  browser.** Step 15's screenshot evidence predates it. The live URL is now the
+  fastest way to close that gap.
+
+#### Next step
+
+Two decisions, both the human's: whether production is where this should be
+sitting today (protection, deletion or acceptance), and what origin
+`NEXT_PUBLIC_SITE_URL` should name. After those, the P0 list from the 2026-09-05
+re-verification is unchanged.
+
+#### Open questions for the human — new in this step
+
+33. **Should the production URL stay open?** It is live, unprotected and indexable
+    by anyone who finds it, while the log says the copy is unreviewed, delivery is
+    a stub and the delay figures are estimates. Vercel Authentication makes it
+    team-only in two clicks and costs nothing; deleting the deployment removes it
+    entirely. Say which.
+34. **Which origin is final —  `incentiv.finance/tools/`, a subdomain, or the
+    `.vercel.app` URL?** `NEXT_PUBLIC_SITE_URL`, the canonical link and the OG
+    card all follow that answer, and the answer also decides whether the current
+    `https://incentiv.finance` default is wrong or merely early.
 
 ## Earlier open questions for the human — historical context
 1. **The `.section-label` role changed.** Step 9's brief assigns eyebrow labels to
